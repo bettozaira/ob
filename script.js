@@ -114,7 +114,7 @@ function calcularNovoValor() {
 // Função para calcular o percentual diário necessário para atingir 1 milhão em 1 ano
 function calcularPercentualDiario() {
     const objetivo = 1000000;
-    const diasNoAno = 365;
+    const diasNoAno = 261;
 
     const percentualNecessario = Math.pow(objetivo / bancaInicial, 1 / diasNoAno) - 1;
     const percentualDiario = percentualNecessario * 100;
