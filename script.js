@@ -107,7 +107,7 @@ function calcularNovoValor() {
     // Atualiza as entradas com a nova banca
     calcularEntradas();
 
-    // Reiniciar o cálculo do percentual diário
+    // Atualiza o percentual diário necessário para atingir 1 milhão em 1 ano
     calcularPercentualDiario();
 }
 
