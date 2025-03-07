@@ -1,7 +1,8 @@
 let bancaInicial = 0;
 let bancaAtual = 0;
-let percentualDia = 0;
+let percentualDiaAcumulado = 0;  // Variável para acumular o percentual
 
+// Função para registrar a banca pela primeira vez
 function registrarBanca() {
     bancaInicial = parseFloat(document.getElementById('banca').value);
 
@@ -21,6 +22,7 @@ function registrarBanca() {
     calcularEntradas();
 }
 
+// Função para calcular as entradas com base na banca e multiplicador
 function calcularEntradas() {
     const entradasList = document.getElementById('entradas-list');
     const multiplicador = parseFloat(document.getElementById('multiplicador').value);
@@ -41,12 +43,10 @@ function calcularEntradas() {
 
     // Calcular a primeira entrada para que a soma total seja igual à banca
     let primeira_entrada = bancaInicial / total_entradas;
-    let totalValorEntradas = 0;
+    let entrada = primeira_entrada;
 
     // Calcular as 8 entradas com base no multiplicador
-    let entrada = primeira_entrada;
     for (let i = 0; i < 8; i++) {
-        totalValorEntradas += entrada;  // Acumula o valor das entradas
         const div = document.createElement('div');
         div.classList.add('entrada-group');
 
@@ -66,17 +66,20 @@ function calcularEntradas() {
     calcularPercentualDiario();
 }
 
+// Função para marcar ganho nas entradas
 function marcarGanho(valorEntrada, index) {
     const payout = parseFloat(document.getElementById('payout').value) / 100;
     const resultadoInput = document.getElementById(`resultado${index}`);
     resultadoInput.value = (valorEntrada * payout).toFixed(2);
 }
 
+// Função para marcar perda nas entradas
 function marcarPerda(valorEntrada, index) {
     const resultadoInput = document.getElementById(`resultado${index}`);
     resultadoInput.value = `-${valorEntrada.toFixed(2)}`;
 }
 
+// Função para calcular novo valor da banca
 function calcularNovoValor() {
     let resultadoTotal = 0;
 
@@ -88,20 +91,27 @@ function calcularNovoValor() {
         }
     }
 
+    // Atualiza a banca com o resultado total
     bancaAtual += resultadoTotal;
     document.getElementById('banca').value = bancaAtual.toFixed(2);
 
-    percentualDia = ((bancaAtual - bancaInicial) / bancaInicial) * 100;
-    document.getElementById('percentual-dia').textContent = `${percentualDia.toFixed(2)}%`;
+    // Acumula o percentual do dia
+    const percentualNovo = ((bancaAtual - bancaInicial) / bancaInicial) * 100;
+    percentualDiaAcumulado += percentualNovo;
+    document.getElementById('percentual-dia').textContent = `${percentualDiaAcumulado.toFixed(2)}%`;
 
-    verificarMetaDiaria();
-    calcularEntradas();
-
-    // Registrar automaticamente a banca atualizada
+    // Atualizar a banca inicial para a nova banca
     bancaInicial = bancaAtual;
     document.getElementById('banca').value = bancaInicial.toFixed(2);
+
+    // Atualiza as entradas com a nova banca
+    calcularEntradas();
+
+    // Reiniciar o cálculo do percentual diário
+    calcularPercentualDiario();
 }
 
+// Função para calcular o percentual diário necessário para atingir 1 milhão em 1 ano
 function calcularPercentualDiario() {
     const objetivo = 1000000;
     const diasNoAno = 365;
@@ -110,19 +120,4 @@ function calcularPercentualDiario() {
     const percentualDiario = percentualNecessario * 100;
 
     document.getElementById('percentual-diario').textContent = `${percentualDiario.toFixed(4)}%`;
-}
-
-function verificarMetaDiaria() {
-    const objetivo = 1000000;
-    const diasNoAno = 365;
-    const percentualNecessario = Math.pow(objetivo / bancaInicial, 1 / diasNoAno) - 1;
-    const percentualDiario = percentualNecessario * 100;
-
-    const percentualElement = document.getElementById('percentual-dia');
-
-    if (percentualDia >= percentualDiario) {
-        percentualElement.classList.add('meta-atendida');
-    } else {
-        percentualElement.classList.remove('meta-atendida');
-    }
 }
